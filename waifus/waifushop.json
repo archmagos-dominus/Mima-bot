@@ -1,0 +1,94 @@
+{
+  "items":[
+    {
+      "id":0,
+      "name":"🍞 Bread",
+      "cost":50
+    },
+    {
+      "id":1,
+      "name":"🍭 Lollipop",
+      "cost":75
+    },
+    {
+      "id":2,
+      "name":"🍨 Ice Cream",
+      "cost":100
+    },
+    {
+      "id":3,
+      "name":"👒 Stylish Hat",
+      "cost":250
+    },
+    {
+      "id":4,
+      "name":"🧋 Tea Date",
+      "cost":500
+    },
+    {
+      "id":5,
+      "name":"🍕 Pizza Date",
+      "cost":1000
+    },
+    {
+      "id":6,
+      "name":"🥣 Antique Bowl",
+      "cost":2000
+    },
+    {
+      "id":7,
+      "name":"📚 Favourite Books",
+      "cost":5000
+    },
+    {
+      "id":8,
+      "name":"🐠 Pet Fish",
+      "cost":7500
+    },
+    {
+      "id":9,
+      "name":"🍫 Belgian Chocolate",
+      "cost":10000
+    },
+    {
+      "id":10,
+      "name":"🎻 Song Commission",
+      "cost":15000
+    },
+    {
+      "id":11,
+      "name":"☂️ Victorian Parasol",
+      "cost":20000
+    },
+    {
+      "id":12,
+      "name":"💐 Flower Bouquet",
+      "cost":25000
+    },
+    {
+      "id":13,
+      "name":"🏍️ Motorcycle",
+      "cost":50000
+    },
+    {
+      "id":14,
+      "name":"💍 Wedding Ring",
+      "cost":100000
+    },
+    {
+      "id":15,
+      "name":"🏎️ Car",
+      "cost":100000
+    },
+    {
+      "id":16,
+      "name":"🏟️ Music Concert",
+      "cost":500000
+    },
+    {
+      "id":17,
+      "name":"🏰 Western Mansion",
+      "cost":1000000
+    }
+  ]
+}

@@ -1,22 +1,20 @@
+// TODO: plant, pick
+
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('currency_shop', {
+  return sequelize.define('planted_currency', {
     id: {
       type: DataTypes.INTEGER,
-      unique: true,
       primaryKey: true,
+      autoIncrement: true
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    cost: {
+    amount: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: false
     },
-    desc: {
+    password: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
+      allowNull: false
+    }
   }, {
     timestamps: false,
   });
