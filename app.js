@@ -1090,7 +1090,7 @@ client.on('message', message => {
 	var mes = message.content.toLowerCase();
 	//decide which reaction to send
 	//check for the ping command
-	if (mes === `ping` || mes === `pong`) {
+	if (mes === `!ping` || mes === `!pong`) {
 		//create the ping embed
 		var ping = new Discord.MessageEmbed()
 			.setTitle(`Pong!:ping_pong:`)
