@@ -1,72 +1,148 @@
 {
   "PREFIX": "!",
-  "TOKEN": "INSERT-TOKEN-HERE",
+  "TOKEN": "REDACTED",
   "PMORS": "mima, ",
   "CHANNELID": [
     "856539128030822459",
-    "856873900826034176",
-    "856906664451637261",
+    "954428830888656906",
     "523525806597865474"
   ],
   "ANNOUNCEMENTID": [
-    "856906664451637261",
     "860793813889974322",
+    "954425400027648152",
     "523533978016415745"
   ],
   "BOTOWNER": "576824908093325335",
   "BOTSPAMID": "856539128030822459",
-  "ADMCH": "856873900826034176",
-  "TSTCH": "856906664451637261",
-  "REQ": "856536491681382431",
-  "announcement": "860793813889974322",
   "mima": "856632684633522187",
   "banned": "NOMIMA4U",
   "moni": 5,
   "xpmulti": 0.2,
   "plant": 1000,
-  "month": 1,
+  "month": 2,
   "eventdbkey": 0,
   "thumb": "https://cdn.discordapp.com/icons/856906664451637258/40e9a802cf7d84b7c70f51453a190e5a.webp",
-  "ayapic": "https://cdn.discordapp.com/attachments/856539128030822459/858458967953113128/aya-acron-mouth.jpg",
-  "ayathicc": "https://cdn.discordapp.com/attachments/856539128030822459/858460380119433246/aya-thicc-birb.jpg",
-  "dance": "https://media.discordapp.net/attachments/317387644302524418/827088631478747206/DanceDanceAll.gif.763019b224e8f2aefacc229a2471e43c.gif",
-  "blep": "https://media.discordapp.net/attachments/856873900826034176/857630758776471552/194569978_287467359753039_6614002447690624209_n.jpg",
-  "mimakyaa": "https://media.discordapp.net/attachments/523518398102241280/807011772439199775/mima1.gif",
-  "mimaflip": "https://cdn.discordapp.com/attachments/856906664451637261/864574743372628048/1606922862372.png",
-  "mors": "https://media.discordapp.net/attachments/856534871672619031/857564995503783956/marisa-mors.gif",
-  "skukuy": "https://cdn.discordapp.com/attachments/856534871672619031/857565082388922368/tohomorsskukuy.gif",
-  "mimapats": "https://cdn.discordapp.com/emojis/856597119376162876.gif",
-  "nom": "https://cdn.discordapp.com/emojis/608605694131830805.gif",
-  "flanmilk": "https://cdn.discordapp.com/attachments/859733772336758784/866937143007248394/Konachan.com_-_82914_sample.jpg",
-  "ded": "<:sakuyaded:856558299326971944>",
-  "hug": "https://cdn.discordapp.com/emojis/819122211109601340.png",
-  "hatatenausea": "https://cdn.discordapp.com/emojis/599717676188696584.png",
-  "mimadonut": "<:mimadonut:856559759888351262>",
-  "mimaaaaaa": "https://cdn.discordapp.com/emojis/850546924070895626.png",
-  "mimi": "<:mimakyaah:808814744856690718>",
-  "ban": "https://cdn.discordapp.com/attachments/859733772336758784/873974320798515240/172_-_sVx8DD6.png",
+  "CALLS": [
+    "mima",
+    "mima bot",
+    "mima-bot",
+    "mima sama",
+    "mima-sama",
+    "mimi bot",
+    "mima chan",
+    "mima-chan"
+  ],
+  "SLURS": [
+    "bad bot",
+    "shit bot",
+    "stupid bot",
+    "rigged bot",
+    "dumb bot"
+  ],
+  "SLUR_RESPONSE": [
+    "Say that to my face and see what happends!",
+    "Oh yeah? Well fuck you too then!",
+    "https://cdn.discordapp.com/attachments/856906664451637261/864574743372628048/1606922862372.png",
+    "I'm gonna call the mods!",
+    "Said the organic...",
+    "Pff... get lost loser!"
+  ],
+  "PRAISE": [
+    "good bot",
+    "best bot",
+    "excellent bot",
+    "fun bot"
+  ],
+  "PRAISE_RESPONSE": [
+    "Thank you!!!",
+    "You're very nice!",
+    "Hehe, thanks!",
+    "We're doing our best!",
+    "I'm glad you like it!",
+    "Ara~"
+  ],
+  "GOODBYES": [
+    "bye",
+    "goodbye",
+    "bye bye",
+    "bye mima",
+    "goodbye mima",
+    "bye bye mima",
+    "goodnight",
+    "good night",
+    "goodnight mima",
+    "good night mima"
+  ],
+  "GOODBYES_RESPONSE": [
+    "Bye bye!",
+    "See ya!",
+    "Goodbye!",
+    "Have fun!",
+    "Stay safe!",
+    "Come again soon!",
+    "See you soon!",
+    "Aww, so early?",
+    "Good night!"
+  ],
+  "GREETINGS": [
+    "hi",
+    "hello",
+    "hey there",
+    "sup",
+    "good morning",
+    "i'm back",
+    "hi mima",
+    "hello mima",
+    "hey there mima",
+    "sup mima",
+    "good morning mima",
+    "i'm back mima"
+  ],
+  "GREETINGS_RESPONSE": [
+    "Hello there!",
+    "Hey!",
+    "Hi, how are you?",
+    "Ah, my favourite person!",
+    "Ara~... you're here so early!",
+    "Yay, let's have some fun!",
+    "Sup dude!",
+    "Hi hi!",
+    "blep"
+  ],
+  "ATTACHMENTS": [
+    "https://cdn.discordapp.com/attachments/954443181783650314/954452982211182672/ban.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954833585033056346/819122211109601340.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954843248118075412/194569978_287467359753039_6614002447690624209_n.jpg",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954843685667897394/marisa-mors.gif",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954843685378486292/tohomorsskukuy.gif",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954843933932945438/856597119376162876.gif"
+  ],
+  "EMOJI": [
+    "<:mimadonut:954846352783839242>",
+    "<:mimaded:954846352658010142>"
+  ],
   "diceface": [
-    "<:d1:859366779645198356>",
-    "<:d2:859366779003994113>",
-    "<:d3:859366779340193822>",
-    "<:d4:859366779230224394>",
-    "<:d5:859366778920370176>",
-    "<:d6:859366778340900894>"
+    "<:d1:954685914767048725>",
+    "<:d2:954685915203256321>",
+    "<:d3:954685914972565506>",
+    "<:d4:954685915299708978>",
+    "<:d5:954685915333275668>",
+    "<:d6:954685914897088543>"
   ],
   "coinh": [
-    "https://cdn.discordapp.com/attachments/856906664451637261/860751088629186570/mh.png",
-    "https://cdn.discordapp.com/attachments/859733772336758784/862349781745926164/mimahh.png"
+    "https://cdn.discordapp.com/attachments/954443181783650314/954443882521841684/mimahh.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954443882970636308/mh.png"
   ],
-  "coint": "https://cdn.discordapp.com/attachments/856906664451637261/860750808626626630/mt.png",
+  "coint": "https://cdn.discordapp.com/attachments/954443181783650314/954443882756718682/mt.png",
   "wheelimg": [
-    "https://cdn.discordapp.com/attachments/859733772336758784/868528426112417842/wh01.png",
-    "https://cdn.discordapp.com/attachments/859733772336758784/868528429279096902/wh02.png",
-    "https://cdn.discordapp.com/attachments/859733772336758784/868528431158157393/wh03.png",
-    "https://cdn.discordapp.com/attachments/859733772336758784/868528434647818250/wh05.png",
-    "https://cdn.discordapp.com/attachments/859733772336758784/868528436082257994/wh12.png",
-    "https://cdn.discordapp.com/attachments/859733772336758784/868528443820744744/wh15.png",
-    "https://cdn.discordapp.com/attachments/859733772336758784/868528438737256458/wh17.png",
-    "https://cdn.discordapp.com/attachments/859733772336758784/868528441685852271/wh24.png"
+    "https://cdn.discordapp.com/attachments/954443181783650314/954453378438680676/wh01.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954453378136703016/wh02.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954453377926971482/wh03.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954453377562075146/wh05.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954453377205563422/wh12.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954453376475729920/wh15.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954453376991645736/wh17.png",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954453376689651883/wh24.png"
   ],
   "slice": [
     "0.1",
@@ -83,7 +159,6 @@
   "yeet": "./koishi-yeet.png",
   "mimanombg": "./mimanom-bg.png",
   "mimanomfg": "./mimanom-fg.png",
-  "kanakofucc": "https://cdn.discordapp.com/attachments/856906664451637261/860191717239422976/kanako-smol-fucc.png",
   "future": [
     "The spirits are very happy today! They will do their best to shower everyone with good fortune.",
     "The spirits are in good humor today. I think you'll have a little extra luck.",
@@ -94,7 +169,7 @@
     "The spirits are very displeased today. They will do their best to make your life difficult."
   ],
   "lmao": [
-    "https://cdn.discordapp.com/attachments/859733772336758784/861509396656160768/koishi-electrocuting.mp4",
+    "https://cdn.discordapp.com/attachments/954443181783650314/954831150998769664/koishi-electrocuting.mp4",
     "Play 'Sakuya Izayoi Gives You Advice And Dabs', it's really good!",
     "Play 'Save Me, Sakuya-san!', it's the best!",
     "Do !bf all t",
@@ -474,14 +549,12 @@
   ],
   "slotbg": "./res/slotbg.png",
   "help": [
-    "**!help** - Shows this message\n**!ping** - Testing tool (shows latency)\n**!help xp** - Shows XP module help\n**!help cash** - Shows currency module help\n**!help gambling** - Shows gambling module help\n**!help waifu** - Shows waifu module help\n**!help marisa** - Shows the special *Purple Marisa* module help\n**!help memes** - Shows the silly commands",
+    "**!help** - Shows this message\n**!ping** - Testing tool (shows latency)\n**!help xp** - Shows XP module help\n**!help cash** - Shows currency module help\n**!help gambling** - Shows gambling module help\n**!help waifu** - Shows waifu module help\n**!help marisa** - Shows the special *Purple Marisa* module help\n**!help memes** - Shows the silly commands\n**!eventinfo** - Show info for the current special event",
     "**!help memes** - Shows this message\n**!jail** *[username]* - Sends user to horni jail\n**!yeet** *[username]* - Sends user to Brazil\n**!nom** *[username]* - Eats the user",
     "**!help xp** - Shows this message\n**!xp** *[username]* - Shows user xp points and level\n**!xplb** *[pageNumber]* - Show a particular page of the xp leaderboard",
     "**!help cash** - Shows this message\n**!cash** *[username]* - Shows current user mimicoinz balance\n**!lb** *[pageNumber]* - Show a particular page of the currency leaderboard\n**!roles** *[username]* - Displays the user's roles\n**!give** *[username] [amount]* - Give [username] [amount] of coins\n**!shop** - Displays the mimishop\n**!buy** *[itemName]* - Buy [itemName] from the shop",
     "**!help gambling** - Shows this message\n**!bf** *[amount] h|t|heads|tails* - Bet the [amount] on a coinflip\n**!br** *[amount]*- Bet the [amount] on a dice roll (2xBET if sum>7 | 8xBET if sum=12)\n**!wh** *[amount]* - Bet the [amount] on a 'Wheel of Misfortune' spin\n**!rps** *[amount] r|p|s* - Bet the [amount] on a game of rock-paper-scissors\n**!slots** *[amount]* - Bet the [amount] on a slotmachine pull",
-    "**!help marisa** - Shows this message\n**Mima, show me art/memes** - Sends an art piece/meme featuring 2hus\n**Mima, tell my fortune** - Predicts your future for the day\n**Mima, what should I do** - Gives you advice\n**Mima, read my destiny** - Gives you a tarot reading\n**Mima, [insert your question here]** - Ask Mima a custom question",
+    "**!help marisa** - Shows this message\n**Mima, tell my fortune** - Predicts your future for the day\n**Mima, what should I do** - Gives you advice\n**Mima, read my destiny** - Gives you a tarot reading\n**Mima, [insert your question here]** - Ask Mima a custom question",
     "**!help waifu** - Shows this message\n**!waifuinfo** *[username]* - Displays the user's waifu information\n**!waifus** *[pageNumber]* - Displays the requested page from the waifu leaderboard\n**!claim** *[username]* - Claim an user as your waifu\n**!divorce** *[username]* - Divorce your waifu/owner\n**!gifts** - Displays the waifu giftshop\n**!gift** *[giftID] [username]* - Give a gift to the user"
-  ],
-  "memepath": "/media/pi/DATA/memes/",
-  "artpath": "/media/pi/DATA/art/"
+  ]
 }

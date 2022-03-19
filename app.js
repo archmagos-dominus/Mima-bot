@@ -11,12 +11,13 @@ const client = new Discord.Client();
 const { Users, CurrencyShop, Waifus, WaifuItems, Transactions, PlantedCurrency 	} = require('./dbObjects');
 const { Op } = require('sequelize');
 const currency = new Discord.Collection();
-const waifu = require('./waifus/waifu.json');
+//const waifu = require('./waifus/waifu.json');
 const waifushop = require('./waifus/waifushop.json');
 const spevent = require('./spevent/spevent.json');
 
-//main prefixes
+//main prefix
 const PREFIX = config.PREFIX;
+//special 'purple marisa' prefix
 const PMORS = config.PMORS;
 
 //global variables
@@ -95,7 +96,7 @@ client.once('ready', async () => {
   //cli greeting message
   console.log(`${client.user.tag} reincarnated!`);
   //greeting message in the main channel
-  client.channels.cache.get(config.BOTSPAMID).send(`Pfew, I'm back! >v<`);
+  client.channels.cache.get(config.CHANNELID[1]).send(`Pfew, I'm back! >v<`);
 });
 
 //////////////////////////////////////////////////////////////////////////embeds
@@ -198,14 +199,15 @@ client.on('message', async message => {
 	if (message.member.roles.cache.find(f => f.name === config.banned)) return;
 	//helper var
 	mes = message.content;
-	//adding currency for every message that is not a bot command (technically)
+	//adding currency for every message that is not a bot command
+  //(if your server uses other bots make sure to include their prefix in this)
 	if (!mes.startsWith(PREFIX) && !mes.startsWith('$')){
 		currency.add(message.author.id, config.moni);
 	}
 	//PLANT COMMAND
 	//check that mima actually has spare cash to give
-	//if he's lucky, give him 1000 coins
 	if (currency.getBalance(config.mima) > 10000) {
+    //if he's lucky, give him 1000 coins
 		if (Math.floor(Math.random()*config.plant) === 4) {
 			currency.add(message.author.id, config.plant, `Random Mima gift`);
 			currency.add(config.mima, -config.plant);
@@ -510,7 +512,7 @@ client.on('message', async message => {
 	const currentAmount = currency.getBalance(message.author.id);
   //check if bet flipping
   if (command === `bf`) {
-		//define bet & tempside here to get rid of 'undefined' error later on
+		//define bet vars & tempside here to get rid of 'undefined' error later on
 		var bet;
 		var msgbet;
 		var tempside;
@@ -633,8 +635,7 @@ client.on('message', async message => {
  	}
 	//check if dice rolling
 	if (command === `br`) {
-		//message.channel.send('checking if bet flipping');
-		//define bet & side here to get rid of 'undefined' error later on
+		//define bet vars here to get rid of 'undefined' error later on
 		var bet;
 		var msgbet;
 		//split args by ' '
@@ -883,7 +884,7 @@ client.on('message', async message => {
 	}
 	//check if playing the slot machine
 	if (command === `slots` || command === 'slot'){
-		//define bet to get rid of 'undefined' error later on
+		//define bet vars to get rid of 'undefined' error later on
 		var bet;
 		var msgbet;
 		//split args by ' '
@@ -1075,15 +1076,10 @@ client.on('message', message => {
 	if (input === 'help waifu') return message.channel.send(helpwf);
 });
 
-//silly reactions module
+//silly reactions module (reworked)
 client.on('message', message => {
 	//check if bot running
 	if (!running) return;
-	//sassy against ran gaming
-	//deprecated
-	// if (message.author.id === '856564419147595807') {
-	// 	return message.reply('Cheap copy');
-	// }
 	//make sure it's not a bot
 	if (message.author.bot) return;
 	//mkae sure message is not in DM
@@ -1108,52 +1104,49 @@ client.on('message', message => {
 	////reply with ban react
 	if (mes === `!ban`) {
 		message.channel.send(`Time to do my job. *click*-*clack*`);
-		message.channel.send(config.ban);
+		message.channel.send(config.ATTACHMENTS[0]);
 		return;
 	}
-	////reply with paparazzi react to the channel
-  if (mes === `snap pic`) return message.channel.send(config.ayapic);
-	//reply with thicc aya react to the channel
-	if (mes === `thicc birb`) return message.channel.send(config.ayathicc);
-	//reply with config.dance react to the channel
-	if (mes === `dance`) return message.channel.send(config.dance);
 	//reply with no problem react to the channel
-	if (mes === `thanks mima`) return message.channel.send(config.hug);
+	if (mes === `thanks mima`) return message.channel.send(config.ATTACHMENTS[1]);
 	//reply with message to the user who mentioned the bot
-	if (mes === 'mima' || mes === "mima bot" || mes === 'mima-bot' || mes === 'mima sama' || mes === 'mima-sama') return message.reply(`I\'m here! ${config.mimadonut}`);
+  if (config.CALLS.includes(mes)) return message.reply(`I'm here! ${config.EMOJI[0]}`);
 	//reply with threats to the channel
-	if (mes === 'bad bot' || mes === 'rigged bot' || mes === 'shit bot') {
-		message.channel.send(`Say that to my face ${message.author} and see what happends ${config.mimadonut}`);
-		message.channel.send(config.mimaflip);
+  if (config.SLURS.includes(mes)) {
+    var a = Math.floor(Math.random() * config.SLUR_RESPONSE.length)
+    message.channel.send(config.SLUR_RESPONSE[a]);
 		return;
-	}
-	//reply with sass to the channel
-	if (mes === 'shutup' || mes === 'shut up' || mes === 'zip it') return message.channel.send(`You shut up!${config.mimadonut}`);
+  }
 	//reply with happy mima to the channel
-	if (mes === 'good bot') return message.channel.send(config.mimakyaa);
-	//reply with sakuyaded to the channel
-	if (mes === `ded`) return message.channel.send(config.ded);
+  if (config.PRAISE.includes(mes)) {
+    var a = Math.floor(Math.random() * config.PRAISE_RESPONSE.length)
+    message.channel.send(config.PRAISE_RESPONSE[a]);
+		return;
+  }
+	//reply with mimaded to the channel
+	if (mes === `ded`) return message.channel.send(config.EMOJI[1]);
 	//say your goodbyes
-	if (mes === `bye mima` || mes === `bye bye mima` || mes === `goodbye mima` || mes === `goodnight mima` || mes === `bye` || mes === `bye bye` || mes === `goodbye` || mes === `goodnight` || mes === `good bye` || mes === `good night`) return message.channel.send(`Bye Bye!`);
+  if (config.GOODBYES.includes(mes)) {
+    var a = Math.floor(Math.random() * config.GOODBYES_RESPONSE.length)
+    message.channel.send(config.GOODBYES_RESPONSE[a]);
+    return;
+  }
 	//say your greetings
-	if (mes === `hello mima` || mes === `good morning mima` || mes === `hi mima` || mes === `hello` || mes === `good morning` || mes === `hi`) return message.channel.send(`${config.mimaaaaaa}`);
+  if (config.GREETINGS.includes(mes)) {
+    var a = Math.floor(Math.random() * config.GREETINGS_RESPONSE.length)
+    message.channel.send(config.GREETINGS_RESPONSE[a]);
+    return;
+  }
 	//config.blep the channel
-	if (mes === `blep`) return message.channel.send(config.blep);
+	if (mes === `blep`) return message.channel.send(config.ATTACHMENTS[2]);
 	//do the config.mors/config.skukuy gifs
 	if (mes === `do it mima`) {
-    message.channel.send(config.mors);
-    message.channel.send(config.skukuy);
+    message.channel.send(config.ATTACHMENTS[3]);
+    message.channel.send(config.ATTACHMENTS[4]);
 		return;
   }
 	//receive the patting
-	if (mes === `*pats mima*`) return message.channel.send(config.mimapats);
-	//hungry?
-	if (mes === `nom`) return message.channel.send(config.nom);
-	//flandre gives you chocmilk, do you accept?
-	if (mes === `milk`) return message.channel.send(config.flanmilk);
-	//reply with kanakofucc to the channel
-	if (mes === `fuck`) return message.channel.send(config.kanakofucc);
-	if (mes === `remindme`) return message.channel.send(`Remeber it yourself birdbrain <:mimamlem:899890579406716929>`);
+	if (mes === `*pats mima*`) return message.channel.send(config.ATTACHMENTS[5]);
 });
 
 //image processing module
@@ -1492,6 +1485,8 @@ client.on('message', async message => {
 	//if the message doesn't start with the PREFIX ignore
 	if (!mes.startsWith(PMORS)) return;
 	//check taht the user has purple marisa role
+  //deprecated because some servers might not setup the role properly
+  //so only mima's DB is trusted
 	//if (!message.member.roles.cache.find(f => f.name === "Purple Marisa")) return message.channel.send('You are not my Marisa');
 	//check to see if the role was bought from the store or given by admin
 	const user = await Users.findOne({ where: { user_id: message.author.id } });
@@ -1573,6 +1568,7 @@ client.on('message', async message => {
 		return message.channel.send(cards);
 	}
 	//8ball like behaviour for everything else
+  //to be replaced by conversational AI later on
 	else {
 		var x = Math.floor(Math.random()*config.crystalball.length);
 		return message.reply(config.crystalball[x]);
@@ -1591,6 +1587,7 @@ client.on('message', async message => {
 	if (message.member.roles.cache.find(f => f.name === config.banned)) return;
 	//make the key for current user
 	const key = message.author.id;
+  //deprecated because now we use a real database not a fucking json file lmfao
 	//if user is new, put him in the database
 	// if(!waifu[key]){
 	// 	waifu[key] = {
@@ -1624,7 +1621,6 @@ client.on('message', async message => {
 	//convert command to LowerCase
 	command = command.toLowerCase();
 	//check user waifu informations
-	// #waifuinfodb
 	if (command === 'waifuinfo') {
     // if any mentions, else checkUser, else get self
     // and also get user object (always returns user)
@@ -1924,7 +1920,7 @@ client.on('message', async message => {
       //post it to the channel
       //client.channels.cache.get(config.announcement).send(eventstart);
       config.ANNOUNCEMENTID.forEach(channel => {
-        client.channels.cache.get(channel).send(eventend);
+        client.channels.cache.get(channel).send(eventstart);
       });
       //event state set to true
       spevent[cmonth].st = 1;
@@ -1942,7 +1938,7 @@ client.on('message', async message => {
       //post it to the channel
       //client.channels.cache.get(config.announcement).send(eventstart);
       config.ANNOUNCEMENTID.forEach(channel => {
-        client.channels.cache.get(channel).send(eventend);
+        client.channels.cache.get(channel).send(eventstart);
       });
       //set event state as true
       spevent[cmonth].st = 1;

@@ -3,7 +3,7 @@
     "id": 0,
     "st": 0,
     "name": "January Snowball Fight",
-    "description": "January. The freezing month in the middle of winter.\nWhat better way to celebrate the cold start of the new year but by holding a snowball fight!\n**Prizes:**\n1st place: 50000 mimicoinz\n2nd place: 25000 mimicoinz\n3rd place: 10000 mimicoinz\nParticipation prize: 1000 mimicoinz\n Good luck!\n**Command list:**\n**!collect** - collect one item to use\n**!throw** - throw a snowball at someone (50% chance of success)\n**!eventlb** - display current event leaderboard\n**!eventstats** - display your (or someone else's) event stats\n**!eventinfo** - display this message",
+    "description": "January. The freezing month in the middle of winter.\nWhat better way to celebrate the cold start of the new year but by holding a big snowball fight!\n**Prizes:**\n1st place: 50000 mimicoinz\n2nd place: 25000 mimicoinz\n3rd place: 10000 mimicoinz\nParticipation prize: 1000 mimicoinz\n Good luck!\n**Command list:**\n**!collect** - collect one item to use\n**!throw** - throw a snowball at someone (50% chance of success)\n**!eventlb** - display current event leaderboard\n**!eventstats** - display your (or someone else's) event stats\n**!eventinfo** - display this message",
     "itemname": "snowball",
     "itemsname": "snowballs",
     "itemicon": "🏐",
@@ -13,7 +13,7 @@
   },
   "1": {
     "id": 1,
-    "st": 1,
+    "st": 0,
     "name": "February Valentines Gifting",
     "description": "The moth of love is here!<3\nShow your true love by gifting chocolate to your favourite people!\n**Prizes:**\n1st place: 50000 mimicoinz\n2nd place: 25000 mimicoinz\n3rd place: 10000 mimicoinz\nParticipation prize: 1000 mimicoinz\n Good luck!\n**Command list:**\n**!collect** - collect one item to use\n**!offer** - offer a token of love to someone (50% chance of success)\n**!eventlb** - display current event leaderboard\n**!eventstats** - display your (or someone else's) event stats\n**!eventinfo** - display this message",
     "itemname": "chocolate",
@@ -25,9 +25,9 @@
   },
   "2": {
     "id": 2,
-    "st": 0,
+    "st": 1,
     "name": "March Flower Giving",
-    "description": "The days are longer; the weater is hotter.\nSpring is here, and with it the first flowers are starting to bloom! Offer them to someone as a lucky charm and win some money while you're at it!\n**Prizes:**\n1st place: 50000 mimicoinz\n2nd place: 25000 mimicoinz\n3rd place: 10000 mimicoinz\nParticipation prize: 1000 mimicoinz\n Good luck!\n**Command list:**\n**!collect** - collect one item to use\n**!offer** - offer a flower to someone (50% chance of success)\n**!eventlb** - display current event leaderboard\n**!eventstats** - display your (or someone else's) event stats\n**!eventinfo** - display this message",
+    "description": "The days are longer; the weather is hotter.\nSpring is here, and with it the first flowers are starting to bloom! Offer them to someone as a lucky charm and win some money while you're at it!\n**Prizes:**\n1st place: 50000 mimicoinz\n2nd place: 25000 mimicoinz\n3rd place: 10000 mimicoinz\nParticipation prize: 1000 mimicoinz\n Good luck!\n**Command list:**\n**!collect** - collect one item to use\n**!offer** - offer a flower to someone (50% chance of success)\n**!eventlb** - display current event leaderboard\n**!eventstats** - display your (or someone else's) event stats\n**!eventinfo** - display this message",
     "itemname": "flower",
     "itemsname": "flowers",
     "itemicon": "🌼",
@@ -75,7 +75,7 @@
     "id": 6,
     "st": 0,
     "name": "July Ice Cream Festival",
-    "description": "Summer is in full swing.\nYou know what I want in this hot weather? Ice cream!\n**Prizes:**\n1st place: 50000 mimicoinz\n2nd place: 25000 mimicoinz\n3rd place: 10000 mimicoinz\nParticipation prize: 1000 mimicoinz\n Good luck!\n**Command list:**\n**!collect** - collect one item to use\n**!offer** - give someone a cold treat (50% chance of success)\n**!eventlb** - display current event leaderboard\n**!eventstats** - display your (or someone else's) event stats\n**!eventinfo** - display this message",
+    "description": "Summer is in full swing.\nYou know what I want in this hot weather? Ice cream!\nI heard there are some stands in town offering some *cool* flavours! (get it?)\n**Prizes:**\n1st place: 50000 mimicoinz\n2nd place: 25000 mimicoinz\n3rd place: 10000 mimicoinz\nParticipation prize: 1000 mimicoinz\n Good luck!\n**Command list:**\n**!collect** - collect one item to use\n**!offer** - give someone a cold treat (50% chance of success)\n**!eventlb** - display current event leaderboard\n**!eventstats** - display your (or someone else's) event stats\n**!eventinfo** - display this message",
     "itemname": "ice cream",
     "itemsname": "ice cream",
     "itemicon": "🍦",
@@ -117,7 +117,7 @@
     "itemicon": "👻",
     "actionname": "scare",
     "onactiontrue": "Hahaha, you got them good! **1 point**",
-    "onactionfalse": "Hah, barely worth the effort..."
+    "onactionfalse": "Pff, barely worth the effort..."
   },
   "10": {
     "id": 10,
