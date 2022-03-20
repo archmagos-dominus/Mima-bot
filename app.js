@@ -21,7 +21,7 @@ const PREFIX = config.PREFIX;
 const PMORS = config.PMORS;
 
 //global variables
-var running = 0;
+var running = 1;
 
 //shenanigans
 Reflect.defineProperty(currency, 'add', {
@@ -96,7 +96,9 @@ client.once('ready', async () => {
   //cli greeting message
   console.log(`${client.user.tag} reincarnated!`);
   //greeting message in the main channel
-  client.channels.cache.get(config.CHANNELID[1]).send(`Pfew, I'm back! >v<`);
+  config.CHANNELID.forEach(channel_id => {
+    client.channels.cache.get(channel_id).send(`Pfew, I'm back! >v<`);
+  });
 });
 
 //////////////////////////////////////////////////////////////////////////embeds
@@ -209,9 +211,13 @@ client.on('message', async message => {
 	if (currency.getBalance(config.mima) > 10000) {
     //if he's lucky, give him 1000 coins
 		if (Math.floor(Math.random()*config.plant) === 4) {
-			currency.add(message.author.id, config.plant, `Random Mima gift`);
-			currency.add(config.mima, -config.plant);
-			client.channels.cache.get(config.BOTSPAMID).send(`You won ${config.plant}💰, ${message.author}! Yay!`);
+      config.CHANNELID.forEach(channel => {
+        if (message.guild.channels.cache.get(channel)) {
+          client.channels.cache.get(channel).send(`You won ${config.plant}💰, ${message.author}! Yay!`);
+          currency.add(message.author.id, config.plant, `Random Mima gift`);
+          currency.add(config.mima, -config.plant);
+        }
+      });
 		}
 	}
 	//make sure the message is sent in the right channel
@@ -313,32 +319,71 @@ client.on('message', async message => {
 		}
 		//get the user data from teh table
 		const user = await Users.findOne({ where: { user_id: message.author.id } });
-		//check to see if he has the role already
+		//check to see if the server has the role already
 		const role = message.guild.roles.cache.find(guild_role => guild_role.name == item.name);
 		//chekc if role exists on the server
 		try {
-			role.name;
+      //check if the user already owns the role
+  		if (message.member.roles.cache.find(f => f.name === role.name)) return message.channel.send('You already have the "' + item.name + '" role.')
+  		//update the ballance
+  		currency.add(message.author.id, -item.cost, `Bought role`);
+  		currency.add(config.mima, item.cost);
+  		//give the user his item
+  		await user.addItem(item);
+  		//assign the user his role
+  		message.member.roles.add(role).catch(console.error);
+  		//confirm the purchase
+  		message.channel.send(`You've bought ${item.name}`);
 		} catch (e) {
-			return message.channel.send('This role is not yet present on this server.');
+      if (item.name === `Purple Marisa`) {
+        //get the user's roles
+        const items = await user.getItems()
+        //check if he already owns the role
+        items.forEach(item => {
+          if (item.name === item) {
+            return message.channel.send('You already have the "' + item.name + '" role.');
+          }
+        });
+    		//update the ballance
+    		currency.add(message.author.id, -item.cost, `Bought role`);
+    		currency.add(config.mima, item.cost);
+    		//give the user his item
+    		await user.addItem(item);
+    		//confirm the purchase
+    		return message.channel.send(`You've bought ${item.name}`);
+      } else {
+        return message.channel.send('This role is not yet present on this server.');
+      }
 		}
-		//check if the user already owns the role
-		if (message.member.roles.cache.find(f => f.name === role.name)) return message.channel.send('You already have role ' + item.name);
-		//update the ballance
-		currency.add(message.author.id, -item.cost, `Bought role`);
-		currency.add(config.mima, item.cost);
-		//give the user his item
-		await user.addItem(item);
-		//assign the user his role
-		message.member.roles.add(role).catch(console.error);
-		//confirm the purchase
-		message.channel.send(`You've bought ${item.name}`);
 	}
 	//displaying the shop
 	else if (command === 'shop') {
+    //get items from the mimishop
 		const items = await CurrencyShop.findAll();
-		return message.channel.send(
-      items.map(i => `"${i.name}": ${i.cost} 💰\n${i.desc}\n`).join('\n'), { code: true }
-    );
+    //create the embed
+    var shop = new Discord.MessageEmbed()
+			.setTitle(`Welcome to the mimishop`)
+			.setColor(0x00AE86)
+			.setThumbnail(config.thumb)
+			.setFooter(`use !buy [rolename] to get one of those roles`);
+    //check to see which roles are present on the server where the req was made
+    ////check if return is empty
+    var empty = true;
+    ////for loop to iterate thought the items
+    items.forEach(item => {
+      const role = message.guild.roles.cache.find(guild_role => guild_role.name == item.name);
+      try {
+  			role.name;
+        shop.addField(`"${item.name}":  ${item.cost} 💰`,`${item.desc}`);
+        empty = false;
+  		} catch (e){
+        true == true
+      }
+    });
+    //create field for empty shop, adding only Purple Marisa role to it.
+    if (empty) shop.addField(`"Purple Marisa": 100000 💰`,`Gives "Purple Marisa" role and access to unique Mima-bot commands`)
+    //send embed to the channel
+		return message.channel.send(shop);
 	}
 	//displaying the top 10 leaderboard
 	else if (command === 'leaderboard' || command === 'lb' ) {
@@ -1348,8 +1393,12 @@ client.on("message", async message => {
   const curLevel = Math.floor(config.xpmulti * Math.sqrt(user.xp));
   //on level up, update db and send a message in the bot channel
   if (user.level < curLevel) {
-    client.channels.cache.get(config.BOTSPAMID).send(`You've leveled up to level **${curLevel}** ${message.author.tag}! Try getting a life? Lmao`);
-    await user.update({ level: curLevel });
+    config.CHANNELID.forEach(async channel => {
+      if (message.guild.channels.cache.get(channel)) {
+        client.channels.cache.get(channel).send(`You've leveled up to level **${curLevel}** ${message.author.tag}! Try getting a life? Lmao`);
+        await user.update({ level: curLevel });
+      }
+    });
   }
   //make sure the message is sent in the right channel
   if (!(config.CHANNELID.includes(message.channel.id))) return;
