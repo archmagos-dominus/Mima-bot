@@ -1468,7 +1468,7 @@ client.on("message", async message => {
   }
 });
 
-//pruple marisa module
+//purple marisa module
 client.on('message', async message => {
 	//check if bot running
 	if (!running) return;
@@ -1632,8 +1632,6 @@ client.on('message', async message => {
       where: { user_id: target.id },
       include: ['waifus'],
     });
-    // TODO: add waifu default value to config, use this for now
-    const WAIFU_DEFAULT = 2500;
     // TODO: simplify
     // this is for value and owner
     const targetWaifu = await Waifus.findOne({
@@ -1661,7 +1659,7 @@ client.on('message', async message => {
       .setTitle(`Waifu info for ${target.tag}`)
       .setColor(0x00AE86)
       .addField('Owned by: ', owner)
-      .addField('Current value: ', targetWaifu?.value || WAIFU_DEFAULT)
+      .addField('Current value: ', targetWaifu?.value || config.WAIFU_DEFAULT)
       .addField('Gifts:', gifts, true)
       .addField('Waifus:', waifus, true);
     return message.channel.send(embed);
@@ -1688,10 +1686,8 @@ client.on('message', async message => {
 		}
 		// find waifu in database to get their value
 		const waifu = await Waifus.findOne({ where: { waifu_id: target.id }, raw: true });
-		// TODO: add waifu default value to config, use this for now
-		const WAIFU_DEFAULT = 2500;
-		// if waifu isnt in database set their value to default
-		const value = waifu?.value || WAIFU_DEFAULT;
+		// if waifu isn't in database set their value to default
+		const value = waifu?.value || config.WAIFU_DEFAULT;
 		// check if my guy has enuff cashmoney
 		if (currency.getBalance(message.author.id) < value) {
 			return message.channel.send(`Sorry ${message.author}, you just don't have the mimicoinz for this one.`);
@@ -1790,11 +1786,10 @@ client.on('message', async message => {
 		}
 		// math variabless
 		const totalGift = gift.cost * multiply;
-		// TODO: add waifu default value to config, use this for now
-		const WAIFU_DEFAULT = 2500;
+		//get waifu
 		const waifu = await Waifus.findOne({ where: { waifu_id: target.id } });
 		// add default waifu value if waifu hasnt claimed
-		const totalValue = Math.floor((waifu?.value || WAIFU_DEFAULT) + totalGift / 2);
+		const totalValue = Math.floor((waifu?.value || config.WAIFU_DEFAULT) + totalGift / 2);
 		if (balance < totalGift) {
 			return message.channel.send(`Sorry ${message.author.tag}, you need more mimicoinz.`);
 		}
