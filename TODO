@@ -1,5 +1,0 @@
-**TODO**:
--make shop dependent on roles that are present on the server
--add for each in xp level up
--add waifu default value to config, use this for now
--finish ShanghAI and use it to handle the 8ball like function instead of relying on hardcoded messages
