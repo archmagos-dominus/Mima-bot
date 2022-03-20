@@ -3,17 +3,12 @@
   "TOKEN": "REDACTED",
   "PMORS": "mima, ",
   "CHANNELID": [
-    "856539128030822459",
-    "954428830888656906",
-    "523525806597865474"
+    "954428830888656906"
   ],
   "ANNOUNCEMENTID": [
-    "860793813889974322",
-    "954425400027648152",
-    "523533978016415745"
+    "954425400027648152"
   ],
   "BOTOWNER": "576824908093325335",
-  "BOTSPAMID": "856539128030822459",
   "mima": "856632684633522187",
   "banned": "NOMIMA4U",
   "WAIFU_DEFAULT": 2500,
@@ -71,7 +66,9 @@
     "goodnight",
     "good night",
     "goodnight mima",
-    "good night mima"
+    "good night mima",
+    "hey mima",
+    "hey there mima"
   ],
   "GOODBYES_RESPONSE": [
     "Bye bye!",
