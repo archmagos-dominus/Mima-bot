@@ -719,7 +719,8 @@ client.on('message', async message => {
 		//inint embed results
 		var roll = new Discord.MessageEmbed()
 			.setTitle(`Bet roll result for ${message.author.username}`)
-			.setColor(0x00AE86);
+			.setColor(0x00AE86)
+      .setThumbnail(message.author.displayAvatarURL());
 		roll.addField(`The dice rolled, and it was:`, '\u200B');
 		roll.addField(`${x}   ${y}`, '\u200B');
 		roll.addField(`${xface} ${yface}`, '\u200B');
