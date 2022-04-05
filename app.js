@@ -1094,6 +1094,38 @@ client.on('message', async message => {
 	}
 });
 
+//blackjack game
+client.on('message', async message => {
+	//check if bot running
+	if (!running) return;
+	//if the sender is a bot ignore
+	if (message.author.bot) return;
+	//mkae sure message is not in DM
+	if (message.channel.type === 'dm') return;
+	//check taht the user isn't banned
+	if (message.member.roles.cache.find(f => f.name === config.banned)) return;
+	//make sure the message is sent in the right channel
+	if (!(config.CHANNELID.includes(message.channel.id))) return;
+	//Convert message to lower case
+	const mes = message.content.toLowerCase();
+	//if the message doesn't start with the PREFIX ignore
+	if (!mes.startsWith(PREFIX)) return;
+	//slice off the PREFIX from the message
+	const input = mes.slice(PREFIX.length).trim();
+	//if what is left from the message is empty ignore
+ 	if (!input.length) return;
+	//mkae sure the trimmed message contains at least a word
+	if (!input.match(/(\w+)\s*([\s\S]*)/)) return;
+	//parse the first word as the command and the rest as arguments
+	const [, command, commandArgs] = input.match(/(\w+)\s*([\s\S]*)/);
+	//fetch the current amount of coins of the user from the database
+	const currentAmount = currency.getBalance(message.author.id);
+  if (commad === 'bj') {
+    //check if there is a table already
+
+  }
+}
+
 //help module
 client.on('message', message => {
 	//check if bot running
@@ -1579,10 +1611,16 @@ client.on('message', async message => {
 	}
 	//tarot reading (tells you your destiny)
 	else if (input === "read my destiny") {
-		//choose 3 tarot cards
+		//choose 3 unique tarot cards
 		var x = Math.floor(Math.random()*config.tarotcard.length);
 		var y = Math.floor(Math.random()*config.tarotcard.length);
-		var z = Math.floor(Math.random()*config.tarotcard.length);
+    while (x === y) {
+      y = Math.floor(Math.random()*config.tarotcard.length);
+    }
+    var z = Math.floor(Math.random()*config.tarotcard.length);
+    while (z === x || z === y) {
+      z = Math.floor(Math.random()*config.tarotcard.length);
+    }
 		//make a single image out of all of them
 		////create the Canvas
 		const canvas = Canvas.createCanvas(210, 120);
