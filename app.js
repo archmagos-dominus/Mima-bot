@@ -4,6 +4,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const Canvas = require('canvas');
+const shuffle = require("shuffle-array");
 
 //dependencies and setupconst
 const config = require('./config.json');
@@ -22,6 +23,7 @@ const PMORS = config.PMORS;
 
 //global variables
 var running = 1;
+var bj_tables = [];
 
 //shenanigans
 Reflect.defineProperty(currency, 'add', {
@@ -81,6 +83,460 @@ function checkUser(user, message) {
   return usr;
 }
 
+//function checking for Blackjack games starting/timing out/uhh (every second)
+setInterval(() => {
+  //iterate through all the currecnt blackjack tables (gameinstances)
+  bj_tables.forEach((item, i) => {
+    //define current time in ms
+    let time = Date.now();
+    //initialize the embed
+    var embed = new Discord.MessageEmbed()
+      .setColor(0x00AE86)
+      .setThumbnail(config.thumb);
+    //check if game has already started
+    if (item.started) {
+      //checks for players and their current states
+      var players_in_game = false;
+      item.player_state.forEach((state, j) => {
+        //check if it is the player's turn and he took more than 10 seconds
+        if (item.player_state[j] === 1 && time - item.player_time > 10000){
+          //set the player state to timed out (4)
+          item.player_state[j] = 4;
+          //reset the timer
+          item.player_time = time;
+          //pass the turn to the next player (no, i mean the next one that can play)
+          temp = true;
+          for (var k = j; k < item.player_state.length; k++) {
+            if (temp) {
+              if (item.player_state[k] === 0){
+                item.player_state[k] = 1;
+                temp = false;
+              }
+            }
+          }
+        }
+        //check if there are any players left to make a move
+        if (state === 0 || state === 1) {
+          players_in_game = true;
+        }
+      });
+      //there are still moves to be made, so get data>calculate wins/loses>make embed
+      if (players_in_game) {
+        //add title and footer to embed
+        embed.setTitle(`Blackjack table - Playing`)
+          .setFooter(`React 🇸 to stand or 🇭 to hit. Bet is ${item.bet} mimicoinz.`);
+        //add the house hand and it's value to be displayed
+        embed.addField(`House hand: ${item.househand[0].value[1]}`,`${item.househand[0].rank}${item.househand[0].emoji}`, true);
+        //for each player, display the cards and calculate the sum and soft sum
+        item.players.forEach((player, j) => {
+          //helper vars
+          var cards = '';
+          var sum1 = 0;
+          var sum2 = 0;
+          //check if player is waiting his turn
+          if (item.player_state[j] === 0) {
+            //create his deck
+            item.playerhands[j].forEach((card, k) => {
+              cards += `${card.rank}${card.emoji} `;
+              sum1 += card.value[0];
+              sum2 += card.value[1];
+            });
+            item.player_totals[j][0] = sum1;
+            item.player_totals[j][1] = sum2;
+            //if the sums are different, show them both, otherwise show only one
+            if (sum1 === sum2) {
+              var sum = `${sum1}`;
+            } else {
+              var sum = `${sum1}(${sum2})`;
+            }
+            //add field to embed
+            embed.addField(`${player.tag}'s hand: ${sum}`,`${cards}`);
+          } else if (item.player_state[j] === 1) {
+            //check if player is still in game and it is his turn
+            item.playerhands[j].forEach((card, k) => {
+              cards += `${card.rank}${card.emoji} `;
+              sum1 += card.value[0];
+              sum2 += card.value[1];
+            });
+            item.player_totals[j][0] = sum1;
+            item.player_totals[j][1] = sum2;
+            //if the sums are different, show them both, otherwise show only one
+            if (sum1 === sum2) {
+              var sum = `${sum1}`;
+            } else {
+              var sum = `${sum1}(${sum2})`;
+            }
+            //add field to embed
+            embed.addField(`${player.tag}'s hand: ${sum}`,`${cards}`);
+            //check for win/loss
+            if ((sum1 > 21) && (sum2 > 21)) {
+              //lose
+              item.player_state[j] = 2;
+              embed.addField(`LOST - ${player.tag}'s hand: ${sum})`,`${cards}`);
+              //give the turn to the next player
+              temp = true; //helper var telling us when to stop
+              //iterate through the players, starting from the next one
+              for (var k = j+1; k < item.player_state.length; k++) {
+                if (temp) {
+                  if (item.player_state[k] === 0){
+                    //set his state to HIS TURN (1)
+                    item.player_state[k] = 1;
+                    //i'm sure there's a better way to do this
+                    temp = false;
+                  }
+                }
+              }
+              //now the same thing, but from the end to the current position
+              for (var k = 0; k < j; k++) {
+                if (temp) {
+                  if (item.player_state[k] === 0){
+                    //set new state
+                    item.player_state[k] = 1;
+                    temp = false;
+                  }
+                }
+              }
+            } else if ((sum1 === 21) || (sum2 === 21) || (item.playerhands[j].length > 4)) {
+              //player wins on blackjack or 5 cards
+              item.player_state[j] = 3;
+              //if the sums are different, show them both, otherwise show only one
+              if (sum1 === sum2) {
+                var sum = `${sum1}`;
+              } else {
+                var sum = `${sum1}(${sum2})`;
+              }
+              //add field to embed
+              embed.addField(`WON - ${player.tag}'s hand: ${sum})`,`${cards}`);
+              //give the turn to the next player
+              temp = true; //helper var telling us when to stop
+              //iterate through the players, starting from the next one
+              for (var k = j+1; k < item.player_state.length; k++) {
+                if (temp) {
+                  if (item.player_state[k] === 0){
+                    //set his state to HIS TURN (1)
+                    item.player_state[k] = 1;
+                    //i'm sure there's a better way to do this
+                    temp = false;
+                  }
+                }
+              }
+            } else {
+              //if the sums are different, show them both, otherwise show only one
+              if (sum1 === sum2) {
+                var sum = `${sum1}`;
+              } else {
+                var sum = `${sum1}(${sum2})`;
+              }
+              //add field to embed
+              embed.addField(`${player.tag}'s hand: ${sum}`,`${cards}`);
+              embed.setTitle(`Player to move: ${player.tag}`);
+            }
+          } else if (item.player_state[j] === 2) {
+            //check if player has lost
+            item.playerhands[j].forEach((card, k) => {
+              cards += `${card.rank}${card.emoji} `;
+              sum1 += card.value[0];
+              sum2 += card.value[1];
+            });
+            //if the sums are different, show them both, otherwise show only one
+            if (sum1 === sum2) {
+              var sum = `${sum1}`;
+            } else {
+              var sum = `${sum1}(${sum2})`;
+            }
+            //add field to embed
+            embed.addField(`LOST - ${player.tag}'s hand: ${sum}`,`${cards}`);
+          } else if (item.player_state[j] === 3) {
+          //check if player has already won
+          item.playerhands[j].forEach((card, k) => {
+            cards += `${card.rank}${card.emoji} `;
+            sum1 += card.value[0];
+            sum2 += card.value[1];
+          });
+          //if the sums are different, show them both, otherwise show only one
+          if (sum1 === sum2) {
+            var sum = `${sum1}`;
+          } else {
+            var sum = `${sum1}(${sum2})`;
+          }
+          //add field to embed
+          embed.addField(`WON - ${player.tag}'s hand: ${sum}`,`${cards}`);
+          } else if (item.player_state[j] === 4) {
+            //check if player is timed out
+            item.playerhands[j].forEach((card, k) => {
+              cards += `${card.rank}${card.emoji} `;
+              sum1 += card.value[0];
+              sum2 += card.value[1];
+            });
+            //if the sums are different, show them both, otherwise show only one
+            if (sum1 === sum2) {
+              var sum = `${sum1}`;
+            } else {
+              var sum = `${sum1}(${sum2})`;
+            }
+            //add field to embed
+            embed.addField(`TIMED OUT - ${player.tag}'s hand: ${sum}`,`${cards}`);
+          } else if (item.player_state[j] === 5){
+            //check if player is still in game but will not receive any new cards because he 'stands'
+            item.playerhands[k].forEach((card, k) => {
+              cards += `${card.rank}${card.emoji} `;
+              sum1 += card.value[0];
+              sum2 += card.value[1];
+            });
+            //if the sums are different, show them both, otherwise show only one
+            if (sum1 === sum2) {
+              var sum = `${sum1}`;
+            } else {
+              var sum = `${sum1}(${sum2})`;
+            }
+            //add field to embed
+            embed.addField(`STAND - ${player.tag}'s hand: ${sum}`,`${cards}`);
+          }
+        });
+        //edit message with embed
+        item.message.edit(embed)
+      }
+      //there are no more players to make moves, give cards to the house and end the game
+      else {
+        //initialize endgame embed fields
+        embed.setTitle(`Blackjack table - Finished!`).setFooter('Game over!');
+        //get the value of the house hand
+        var house_total = item.househand[0].value[1];
+        //give the house her cards
+        do {
+          //give a card to the house
+          item.househand.push(item.deck[0]);
+          //calculate the new totals
+          house_total += item.househand[item.househand.length - 1].value[1];
+          //remove card from deck
+          item.deck.splice(0, 1);
+        } while (house_total < 17);
+        //check if bust or not
+        var bust = false;
+        if (house_total > 21) bust = true;
+        //display the house results
+        //helper vars for the house section
+        var house = '';
+        var sum = 0;
+        //iterate through the house hand
+        item.househand.forEach((card, j) => {
+          //create the deck to show on screen
+          house += `${card.rank}${card.emoji} `;
+          //calculate the sum of the cards and the sum
+          sum += card.value[1];
+        });
+        //add field to embed
+        embed.addField(`House hand: ${sum}`,`${house}`, true);
+        //tally wins/loses
+        if (bust) {
+          //house lost
+          item.players.forEach((player, j) => {
+            if (item.player_state[j] === 2) {
+              //player lost - bust
+              currency.add(player.id, -(Math.floor(item.bet)), `Blackjack`);
+        			currency.add(config.mima, Math.floor(item.bet));
+            } else if (item.player_state[j] === 3) {
+              //player won - blackjack or 5 cards
+              currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
+        			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
+            } else if (item.player_state[j] === 4) {
+              //player lost - timed out
+              currency.add(player.id, -(Math.floor(item.bet)), `Blackjack`);
+        			currency.add(config.mima, Math.floor(item.bet));
+              //set state for embed
+              item.player_state[j] = 2;
+            } else if (item.player_state[j] === 5) {
+              //player won - stand
+              currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
+        			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
+              //set state for embed
+              item.player_state[j] = 3;
+            }
+          });
+        } else {
+          //house not out of the game
+          item.players.forEach((player, j) => {
+            if (item.player_state[j] === 2) {
+              //player lost - bust
+              currency.add(player.id, -(Math.floor(item.bet)), `Blackjack`);
+        			currency.add(config.mima, Math.floor(item.bet));
+            } else if (item.player_state[j] === 3) {
+              //player won - blackjack
+              currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
+        			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
+            } else if (item.player_state[j] === 4) {
+              //player lost - timed out
+              currency.add(player.id, -(Math.floor(item.bet)), `Blackjack`);
+        			currency.add(config.mima, Math.floor(item.bet));
+              //set state for embed
+              item.player_state[j] = 2;
+            } else if (item.player_state[j] === 5) {
+              if (item.player_totals[j] > house_total) {
+                //player won - stand
+                currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
+          			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
+                //set state for embed
+                item.player_state[j] = 3;
+              } else {
+                //player lost - stand
+                currency.add(player.id, -(Math.floor(item.bet)), `Blackjack`);
+          			currency.add(config.mima, Math.floor(item.bet));
+                //set state for embed
+                item.player_state[j] = 2;
+              }
+            }
+          });
+        }
+        //iterate through all the players
+        item.players.forEach((player, k) => {
+          var cards = '';
+          var sum1 = 0;
+          var sum2 = 0;
+          if (item.player_state[k] === 2) {
+            //check if player has lost
+            item.playerhands[k].forEach((card, l) => {
+              cards += `${card.rank}${card.emoji} `;
+              sum1 += card.value[0];
+              sum2 += card.value[1];
+            });
+            //if the sums are different, show them both, otherwise show only one
+            if (sum1 === sum2) {
+              var sum = `${sum1}`;
+            } else {
+              var sum = `${sum1}(${sum2})`;
+            }
+            //add field to embed
+            embed.addField(`LOST - ${player.tag}'s hand: ${sum}`,`${cards}`);
+          } else if (item.player_state[k] === 3) {
+            //check if player has already won
+            item.playerhands[k].forEach((card, l) => {
+              cards += `${card.rank}${card.emoji} `;
+              sum1 += card.value[0];
+              sum2 += card.value[1];
+            });
+            //if the sums are different, show them both, otherwise show only one
+            if (sum1 === sum2) {
+              var sum = `${sum1}`;
+            } else {
+              var sum = `${sum1}(${sum2})`;
+            }
+            //add field to embed
+            embed.addField(`WON - ${player.tag}'s hand: ${sum}`,`${cards}`);
+          }
+        });
+        //edit the message with the new embed
+        item.message.edit(embed);
+        //remove the game from the array
+        bj_tables.splice(i, 1);
+      }
+    } else {
+      //game exists, but has not yet begun
+      //check to see if the game was created more than 10s ago
+      if (time - item.time > 10000) {
+        //start the game
+        item.started = true;
+        //add title and footer to embed
+        embed.setTitle(`Blackjack table - Playing`)
+          .setFooter(`React 🇸 to stand or 🇭 to hit. Bet is ${item.bet} mimicoinz.`);
+        //shuffle the deck
+        item.deck = shuffle(item.deck)
+        //give the players the first 2 cards
+        item.players.forEach((player, j) => {
+          item.playerhands[j][0] = item.deck[0];
+          item.playerhands[j][1] = item.deck[1];
+          item.deck.splice(0, 2);
+        });
+        //give the house one card
+        item.househand.push(item.deck[0]);
+        item.deck.splice(0, 1);
+        //add the house hand and it's value to be displayed
+        embed.addField(`House hand: ${item.househand[0].value[1]}`,`${item.househand[0].rank}${item.househand[0].emoji}`, true);
+        //give teh first player in the array the turn (state 1)
+        item.player_state[0] = 1;
+        //for each player, display the cards and calculate the sum and soft sum
+        item.players.forEach((player, j) => {
+          //helper vars
+          var cards = '';
+          var sum1 = 0;
+          var sum2 = 0;
+          //iterate through the player's hand
+          item.playerhands[j].forEach((card, k) => {
+            //create the deck to show on screen
+            cards += `${card.rank}${card.emoji} `;
+            //calculate the sum of the cards and the soft sum
+            sum1 += card.value[0];
+            sum2 += card.value[1];
+          });
+          //store the hand value
+          item.player_totals[j][0] = sum1;
+          item.player_totals[j][1] = sum2;
+          //check for blackjack
+          if (sum1 === 21 || sum2 === 21) {
+            //check if it is the player's turn
+            if (item.player_state[j] === 1) {
+              //pass the turn to someone else (if any)
+              temp = true; //helper var telling us when to stop
+              //iterate through the players, starting from the next one
+              for (var k = j+1; k < item.player_state.length; k++) {
+                if (temp) {
+                  if (item.player_state[k] === 0){
+                    //set his state to HIS TURN (1)
+                    item.player_state[k] = 1;
+                    //i'm sure there's a better way to do this
+                    temp = false;
+                  }
+                }
+              }
+              //now the same thing, but from the end to the current position
+              for (var k = 0; k < j; k++) {
+                if (temp) {
+                  if (item.player_state[k] === 0){
+                    //set new state
+                    item.player_state[k] = 1;
+                    temp = false;
+                  }
+                }
+              }
+            }
+            //set him as winner
+            item.player_state[j] = 3;
+          }
+          //if the sums are different, show them both, otherwise show only one
+          if (sum1 === sum2) {
+            var sum = `${sum1}`;
+          } else {
+            var sum = `${sum1}(${sum2})`;
+          }
+          //add field to embed
+          embed.addField(`${player.tag}'s hand: ${sum}`,`${cards}`);
+          //tell who's the next player to make a move
+          if (item.player_state[j] === 1) embed.setTitle(`Player to move:`, `${player.tag}`);
+        });
+        //edit message with embed
+        item.message.edit(embed)
+        //add te reactions to the message
+        item.message.react('🇸');
+        item.message.react('🇭');
+        //reset the player_time to the current time
+        item.player_time = time;
+      } else {
+        //just update the embed to make sure anyone that joins is shown
+        embed.setTitle(`Blackjack table - Getting ready`)
+        .setFooter(`React ✅ to join. Bet is ${item.bet} mimicoinz.`);
+        embed.addField(`Status:`,`Waiting for game start...`);
+        //iterate through all the players
+        var player_names = ``;
+        item.players.forEach((player, j) => {
+          player_names += `${player.tag}\n`
+        });
+        embed.addField(`Current players:`,`${player_names}`);
+        //replace the embed with the new one we just made
+        item.message.edit(embed);
+      }
+    }
+  });
+}, 1000);
+
 //on start
 client.once('ready', async () => {
   //fill up the user table and their money
@@ -96,9 +552,9 @@ client.once('ready', async () => {
   //cli greeting message
   console.log(`${client.user.tag} reincarnated!`);
   //greeting message in the main channel
-  config.CHANNELID.forEach(channel_id => {
-    client.channels.cache.get(channel_id).send(`Pfew, I'm back! >v<`);
-  });
+  // config.CHANNELID.forEach(channel_id => {
+  //   client.channels.cache.get(channel_id).send(`Pfew, I'm back! >v<`);
+  // });
 });
 
 //////////////////////////////////////////////////////////////////////////embeds
@@ -1092,39 +1548,242 @@ client.on('message', async message => {
 		//display embed results
 		return message.reply(slots);
 	}
+  //BLACKJACK AREA
+  if (command === "bj") {
+    //check if there's already a bj table
+    var game_in_progress = false
+    bj_tables.forEach((item, i) => {
+      if (item.gameid === message.channel.id){
+        game_in_progress = true;
+      }
+    });
+    if (game_in_progress) return message.channel.send(`Blackjack game already in progress, please wait warmly!`);
+    //split args by ' '
+		const cmds = commandArgs.split(' ');
+		//check that the argument is actually something
+		if (!cmds[0]) return message.channel.send(`Sorry ${message.author}, that's an invalid bet.`);;
+		//check to see if the arg has numbers in it
+		if (cmds[0].match(/\d/)) {
+			//store the bet
+			bet = Math.floor(cmds[0]);
+		}
+		//if argument is not a number, check if one is half or all
+		else if (cmds[0] === 'half') {
+			//store the bet
+			bet = Math.floor(currentAmount/2);
+		} else if (cmds[0] === 'all') {
+			//store the bet
+			bet = currentAmount;
+			msgbet = true;
+		}
+		//check if bet is valid or that 0 < bet < currentAmount
+		//bet is 0 or otherwise invalid
+		if (!bet || isNaN(bet)) return message.channel.send(`Sorry ${message.author}, that's an invalid bet (make it a number greater than 0)`);
+		//bet is more than the person has in his account
+		if (bet > currentAmount) return message.channel.send(`${message.author} you're too poor to gamble like that.`);
+		//bet is a negative number
+		if (bet <= 0) return message.channel.send(`I know times are tough, but enter an amount greater than zero, ${message.author}`);
+    //current date&time setup
+    let ts = Date.now();
+    //create the game
+    bj_game = {
+      gameid: message.channel.id,
+      time: ts,
+      players: [
+        message.author
+      ],
+      deck:[
+        { rank: "A", value: [1, 11], emoji: "♣️" },
+        { rank: "2", value: [2, 2], emoji: "♣️" },
+        { rank: "3", value: [3, 3], emoji: "♣️" },
+        { rank: "4", value: [4, 4], emoji: "♣️" },
+        { rank: "5", value: [5, 5], emoji: "♣️" },
+        { rank: "6", value: [6, 6], emoji: "♣️" },
+        { rank: "7", value: [7, 7], emoji: "♣️" },
+        { rank: "8", value: [8, 8], emoji: "♣️" },
+        { rank: "9", value: [9, 9], emoji: "♣️" },
+        { rank: "10", value: [10, 10], emoji: "♣️" },
+        { rank: "J", value: [10, 10], emoji: "♣️" },
+        { rank: "Q", value: [10, 10], emoji: "♣️" },
+        { rank: "K", value: [10, 10], emoji: "♣️" },
+        { rank: "A", value: [1, 11], emoji: "️️️️️️♦️" },
+        { rank: "2", value: [2, 2], emoji: "♦️" },
+        { rank: "3", value: [3, 3], emoji: "♦️" },
+        { rank: "4", value: [4, 4], emoji: "♦️" },
+        { rank: "5", value: [5, 5], emoji: "♦️" },
+        { rank: "6", value: [6, 6], emoji: "♦️" },
+        { rank: "7", value: [7, 7], emoji: "♦️" },
+        { rank: "8", value: [8, 8], emoji: "♦️" },
+        { rank: "9", value: [9, 9], emoji: "♦️" },
+        { rank: "10", value: [10, 10], emoji: "♦️" },
+        { rank: "J", value: [10, 10], emoji: "♦️" },
+        { rank: "Q", value: [10, 10], emoji: "♦️" },
+        { rank: "K", value: [10, 10], emoji: "♦️" },
+        { rank: "A", value: [1, 11], emoji: "♥️" },
+        { rank: "2", value: [2, 2], emoji: "♥️" },
+        { rank: "3", value: [3, 3], emoji: "♥️" },
+        { rank: "4", value: [4, 4], emoji: "♥️" },
+        { rank: "5", value: [5, 5], emoji: "♥️" },
+        { rank: "6", value: [6, 6], emoji: "♥️" },
+        { rank: "7", value: [7, 7], emoji: "♥️" },
+        { rank: "8", value: [8, 8], emoji: "♥️" },
+        { rank: "9", value: [9, 9], emoji: "♥️" },
+        { rank: "10", value: [10, 10], emoji: "♥️" },
+        { rank: "J", value: [10, 10], emoji: "♥️" },
+        { rank: "Q", value: [10, 10], emoji: "♥️" },
+        { rank: "K", value: [10, 10], emoji: "♥️" },
+        { rank: "A", value: [1, 11], emoji: "♠️" },
+        { rank: "2", value: [2, 2], emoji: "♠️" },
+        { rank: "3", value: [3, 3], emoji: "♠️" },
+        { rank: "4", value: [4, 4], emoji: "♠️" },
+        { rank: "5", value: [5, 5], emoji: "♠️" },
+        { rank: "6", value: [6, 6], emoji: "♠️" },
+        { rank: "7", value: [7, 7], emoji: "♠️" },
+        { rank: "8", value: [8, 8], emoji: "♠️" },
+        { rank: "9", value: [9, 9], emoji: "♠️" },
+        { rank: "10", value: [10, 10], emoji: "♠️" },
+        { rank: "J", value: [10, 10], emoji: "♠️" },
+        { rank: "Q", value: [10, 10], emoji: "♠️" },
+        { rank: "K", value: [10, 10], emoji: "♠️" },
+      ],
+      playerhands:[[null, null]],
+      househand:[],
+      bet: bet,
+      player_time: ts,
+      message: null,
+      started: false,
+      player_state:[
+        0
+      ],
+      player_totals:[[0, 0]]
+    }
+    //create the embed
+    var embed = new Discord.MessageEmbed()
+			.setTitle(`Blackjack table - Getting ready`)
+			.setColor(0x00AE86)
+			.setThumbnail(config.thumb)
+      .setFooter(`React ✅ to join. Bet is ${bet} mimicoinz.`);
+    embed.addField(`Status:`,`Waiting for game start...`);
+    embed.addField(`Current players:`,`${message.author.tag}`);
+    //send the embed and store the embed message id
+    //for the reaction checks and the edit functions
+    let temp = await message.channel.send(embed);
+    //react with the initial reactions
+    temp.react('✅');
+    //store the message sent for further editing down the line
+    bj_game.message = temp;
+    //put this instance of the game into the tables array
+    bj_tables.push(bj_game);
+  }
 });
 
-//blackjack game
-client.on('message', async message => {
-	//check if bot running
-	if (!running) return;
-	//if the sender is a bot ignore
-	if (message.author.bot) return;
-	//mkae sure message is not in DM
-	if (message.channel.type === 'dm') return;
-	//check taht the user isn't banned
-	if (message.member.roles.cache.find(f => f.name === config.banned)) return;
-	//make sure the message is sent in the right channel
-	if (!(config.CHANNELID.includes(message.channel.id))) return;
-	//Convert message to lower case
-	const mes = message.content.toLowerCase();
-	//if the message doesn't start with the PREFIX ignore
-	if (!mes.startsWith(PREFIX)) return;
-	//slice off the PREFIX from the message
-	const input = mes.slice(PREFIX.length).trim();
-	//if what is left from the message is empty ignore
- 	if (!input.length) return;
-	//mkae sure the trimmed message contains at least a word
-	if (!input.match(/(\w+)\s*([\s\S]*)/)) return;
-	//parse the first word as the command and the rest as arguments
-	const [, command, commandArgs] = input.match(/(\w+)\s*([\s\S]*)/);
-	//fetch the current amount of coins of the user from the database
-	const currentAmount = currency.getBalance(message.author.id);
-  if (commad === 'bj') {
-    //check if there is a table already
-
+//blackjack helper listener
+client.on('messageReactionAdd', async (reaction, user) => {
+	if (reaction.partial) {
+		// If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
+		try {
+			await reaction.fetch();
+		} catch (error) {
+			console.error('Something went wrong when fetching the message:', error);
+			return;
+		}
   }
-}
+  //check for bot so that mima can do her own thing
+  if (user.bot) return;
+  //iterate through the entire games array
+  bj_tables.forEach((item, i) => {
+    //check if the reaction is to a message describing a blackjack table
+    if (reaction.message === item.message) {
+      //current date&time setup
+      let time = Date.now();
+      //check if he's trying to join, or stand/hit
+      if (reaction.emoji.name === "✅"){
+        //check if the game is already running
+        if (item.started) return;
+        //check that there are still places at the table (4?)
+        if (item.players.length > 4) return reaction.message.channel.send(`${user} - Table full, please wait for this game to finish.`);
+        //check to see if the player has the money required to play at the table
+        if (item.bet > currency.getBalance(user.id)) return reaction.message.channel.send(`${user} - you do not have the coins to join this table.`);
+        //iterate through all the players at the table
+        var temp = true;
+        item.players.forEach((player, j) => {
+          //check if player is in the game already
+          if (player === user) temp = false;
+        });
+        //if the player is already at the tabel, ignore
+        if (!temp) return;
+        //if everything is ok, add this player to the table
+        item.players.push(user);
+        //add his state to the game as well
+        item.player_state.push(0);
+        //add his total to the total array even though i think that array is not needed
+        var array = [0, 0];
+        item.player_totals.push(array);
+        //add his hand to the playerhands array
+        var hand = [null, null];
+        item.playerhands.push(hand);
+      } else if (reaction.emoji.name === "🇸") {
+        //check if the game is running
+        if (!item.started) return;
+        //iterate throught the players
+        item.players.forEach((player, j) => {
+          //get the correct player
+          if (player === user) {
+            //check to see if it is the player's turn
+            if (item.player_state[j] != 1) return;
+            //modify his state to STAND (5)
+            item.player_state[j] = 5;
+            //pass the turn to the next player (no, i mean the next one that can play)
+            var temp = true;
+            //iterate through the array of players starting from the current one
+            //until you reach a player with the state '0' (playing, awaiting his turn)
+            for (var k = j; k < item.player_state.length; k++) {
+              if (temp) {
+                if (item.player_state[k] === 0){
+                  item.player_state[k] = 1;
+                  item.player_time = time;
+                  temp = false;
+                }
+              }
+            }
+          }
+        });
+      } else if (reaction.emoji.name === "🇭") {
+        //check if the game is running
+        if (!item.started) return;
+        //iterate throught the players
+        item.players.forEach((player, j) => {
+          //get the correct player
+          if (player === user) {
+            //check to see if it is the player's turn
+            if (item.player_state[j] != 1) return;
+            //give the user a new card
+            item.playerhands[j].push(item.deck[0]);
+            //remove said card from main deck
+            item.deck.splice(0, 1);
+            //check if player has more than 5 cards
+            if (item.playerhands[j].length === 5) {
+              //player wins by default
+              item.player_state[j] = 3;
+              //pass the turn to the next player that can play
+              var temp = true;
+              for (var k = j; k < item.player_state.length; k++) {
+                if (temp) {
+                  if (item.player_state[k] === 0){
+                    item.player_state[k] = 1;
+                    temp = false;
+                  }
+                }
+              }
+            }
+          //reset timer
+          item.player_time = time;
+          }
+        });
+      }
+    }
+  });
+});
 
 //help module
 client.on('message', message => {
