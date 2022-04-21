@@ -276,7 +276,7 @@ setInterval(() => {
             embed.addField(`TIMED OUT - ${player.tag}'s hand: ${sum}`,`${cards}`);
           } else if (item.player_state[j] === 5){
             //check if player is still in game but will not receive any new cards because he 'stands'
-            item.playerhands[k].forEach((card, k) => {
+            item.playerhands[j].forEach((card, k) => {
               cards += `${card.rank}${card.emoji} `;
               sum1 += card.value[0];
               sum2 += card.value[1];
