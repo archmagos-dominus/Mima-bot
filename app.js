@@ -166,8 +166,6 @@ setInterval(() => {
             } else {
               var sum = `${sum1}(${sum2})`;
             }
-            //add field to embed
-            embed.addField(`${player.tag}'s hand: ${sum}`,`${cards}`);
             //check for win/loss
             if ((sum1 > 21) && (sum2 > 21)) {
               //lose
@@ -371,12 +369,17 @@ setInterval(() => {
               //set state for embed
               item.player_state[j] = 2;
             } else if (item.player_state[j] === 5) {
-              if (item.player_totals[j] > house_total) {
+              //check the player's hand value compared to the the house's
+              if (((item.player_totals[j][0] < 21)&&(item.player_totals[j][0] > house_total))||((item.player_totals[j][1] < 21)&&(item.player_totals[j][1] > house_total))) {
                 //player won - stand
                 currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
           			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
                 //set state for embed
                 item.player_state[j] = 3;
+              } else if ((item.player_totals[j][0] === house_total)||(item.player_totals[j][1] === house_total)) {
+                //player draw - stand
+                //set state for embed
+                item.player_state[j] = 6;
               } else {
                 //player lost - stand
                 currency.add(player.id, -(Math.floor(item.bet)), `Blackjack`);
@@ -422,6 +425,21 @@ setInterval(() => {
             }
             //add field to embed
             embed.addField(`WON - ${player.tag}'s hand: ${sum}`,`${cards}`);
+          } else if (item.player_state === 6) {
+            //check if player and the house have reached a DRAW
+            item.playerhands[k].forEach((card, l) => {
+              cards += `${card.rank}${card.emoji} `;
+              sum1 += card.value[0];
+              sum2 += card.value[1];
+            });
+            //if the sums are different, show them both, otherwise show only one
+            if (sum1 === sum2) {
+              var sum = `${sum1}`;
+            } else {
+              var sum = `${sum1}(${sum2})`;
+            }
+            //add field to embed
+            embed.addField(`DRAW - ${player.tag}'s hand: ${sum}`,`${cards}`);
           }
         });
         //edit the message with the new embed
