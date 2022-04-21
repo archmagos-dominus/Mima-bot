@@ -98,10 +98,11 @@ setInterval(() => {
       //checks for players and their current states
       var players_in_game = false;
       item.player_state.forEach((state, j) => {
-        //check if it is the player's turn and he took more than 10 seconds
-        if (item.player_state[j] === 1 && time - item.player_time > 10000){
+        //check if it is the player's turn and he took more than 20 seconds
+        if (item.player_state[j] === 1 && time - item.player_time > 20000){
           //set the player state to timed out (4)
-          item.player_state[j] = 4;
+          //set it to stand instead
+          item.player_state[j] = 5;
           //reset the timer
           item.player_time = time;
           //pass the turn to the next player (no, i mean the next one that can play)
@@ -259,21 +260,6 @@ setInterval(() => {
           }
           //add field to embed
           embed.addField(`WON - ${player.tag}'s hand: ${sum}`,`${cards}`);
-          } else if (item.player_state[j] === 4) {
-            //check if player is timed out
-            item.playerhands[j].forEach((card, k) => {
-              cards += `${card.rank}${card.emoji} `;
-              sum1 += card.value[0];
-              sum2 += card.value[1];
-            });
-            //if the sums are different, show them both, otherwise show only one
-            if (sum1 === sum2) {
-              var sum = `${sum1}`;
-            } else {
-              var sum = `${sum1}(${sum2})`;
-            }
-            //add field to embed
-            embed.addField(`TIMED OUT - ${player.tag}'s hand: ${sum}`,`${cards}`);
           } else if (item.player_state[j] === 5){
             //check if player is still in game but will not receive any new cards because he 'stands'
             item.playerhands[j].forEach((card, k) => {
@@ -335,18 +321,12 @@ setInterval(() => {
         			currency.add(config.mima, Math.floor(item.bet));
             } else if (item.player_state[j] === 3) {
               //player won - blackjack or 5 cards
-              currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
-        			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
-            } else if (item.player_state[j] === 4) {
-              //player lost - timed out
-              currency.add(player.id, -(Math.floor(item.bet)), `Blackjack`);
-        			currency.add(config.mima, Math.floor(item.bet));
-              //set state for embed
-              item.player_state[j] = 2;
+              currency.add(player.id, Math.floor(item.bet*0.5), `Blackjack`);
+        			currency.add(config.mima, -(Math.floor(item.bet*0.5)));
             } else if (item.player_state[j] === 5) {
               //player won - stand
-              currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
-        			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
+              currency.add(player.id, Math.floor(item.bet*0.5), `Blackjack`);
+        			currency.add(config.mima, -(Math.floor(item.bet*0.5)));
               //set state for embed
               item.player_state[j] = 3;
             }
@@ -360,20 +340,14 @@ setInterval(() => {
         			currency.add(config.mima, Math.floor(item.bet));
             } else if (item.player_state[j] === 3) {
               //player won - blackjack
-              currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
-        			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
-            } else if (item.player_state[j] === 4) {
-              //player lost - timed out
-              currency.add(player.id, -(Math.floor(item.bet)), `Blackjack`);
-        			currency.add(config.mima, Math.floor(item.bet));
-              //set state for embed
-              item.player_state[j] = 2;
+              currency.add(player.id, Math.floor(item.bet*0.5), `Blackjack`);
+        			currency.add(config.mima, -(Math.floor(item.bet*0.5)));
             } else if (item.player_state[j] === 5) {
               //check the player's hand value compared to the the house's
               if (((item.player_totals[j][0] < 21)&&(item.player_totals[j][0] > house_total))||((item.player_totals[j][1] < 21)&&(item.player_totals[j][1] > house_total))) {
                 //player won - stand
-                currency.add(player.id, Math.floor(item.bet*1.5), `Blackjack`);
-          			currency.add(config.mima, -(Math.floor(item.bet*1.5)));
+                currency.add(player.id, Math.floor(item.bet*0.5), `Blackjack`);
+          			currency.add(config.mima, -(Math.floor(item.bet*0.5)));
                 //set state for embed
                 item.player_state[j] = 3;
               } else if ((item.player_totals[j][0] === house_total)||(item.player_totals[j][1] === house_total)) {
@@ -425,7 +399,7 @@ setInterval(() => {
             }
             //add field to embed
             embed.addField(`WON - ${player.tag}'s hand: ${sum}`,`${cards}`);
-          } else if (item.player_state === 6) {
+          } else if (item.player_state[k] === 6) {
             //check if player and the house have reached a DRAW
             item.playerhands[k].forEach((card, l) => {
               cards += `${card.rank}${card.emoji} `;
@@ -455,7 +429,7 @@ setInterval(() => {
         item.started = true;
         //add title and footer to embed
         embed.setTitle(`Blackjack table - Playing`)
-          .setFooter(`React 🇸 to stand or 🇭 to hit. Bet is ${item.bet} mimicoinz.`);
+          .setFooter(`React 🇸 to stand or 🇭 to hit. Bet is ${item.bet} mimicoinz. Win rate is 3/2.`);
         //shuffle the deck
         item.deck = shuffle(item.deck)
         //give the players the first 2 cards
@@ -540,7 +514,7 @@ setInterval(() => {
       } else {
         //just update the embed to make sure anyone that joins is shown
         embed.setTitle(`Blackjack table - Getting ready`)
-        .setFooter(`React ✅ to join. Bet is ${item.bet} mimicoinz.`);
+        .setFooter(`React ✅ to join. Bet is ${item.bet} mimicoinz. Win rate is 3/2.`);
         embed.addField(`Status:`,`Waiting for game start...`);
         //iterate through all the players
         var player_names = ``;
@@ -1566,7 +1540,7 @@ client.on('message', async message => {
 		//display embed results
 		return message.reply(slots);
 	}
-  //BLACKJACK AREA
+  //check if user is starting a blackjack game
   if (command === "bj") {
     //check if there's already a bj table
     var game_in_progress = false
@@ -1680,7 +1654,7 @@ client.on('message', async message => {
 			.setTitle(`Blackjack table - Getting ready`)
 			.setColor(0x00AE86)
 			.setThumbnail(config.thumb)
-      .setFooter(`React ✅ to join. Bet is ${bet} mimicoinz.`);
+      .setFooter(`React ✅ to join. Bet is ${bet} mimicoinz. Win rate is 3/2.`);
     embed.addField(`Status:`,`Waiting for game start...`);
     embed.addField(`Current players:`,`${message.author.tag}`);
     //send the embed and store the embed message id
@@ -1695,7 +1669,7 @@ client.on('message', async message => {
   }
 });
 
-//blackjack helper listener
+//blackjack reactions listener
 client.on('messageReactionAdd', async (reaction, user) => {
 	if (reaction.partial) {
 		// If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
@@ -1719,7 +1693,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
         //check if the game is already running
         if (item.started) return;
         //check that there are still places at the table (4?)
-        if (item.players.length > 4) return reaction.message.channel.send(`${user} - Table full, please wait for this game to finish.`);
+        if (item.players.length === 4) return reaction.message.channel.send(`${user} - Table full, please wait for this game to finish.`);
         //check to see if the player has the money required to play at the table
         if (item.bet > currency.getBalance(user.id)) return reaction.message.channel.send(`${user} - you do not have the coins to join this table.`);
         //iterate through all the players at the table
@@ -1780,6 +1754,12 @@ client.on('messageReactionAdd', async (reaction, user) => {
             //remove said card from main deck
             item.deck.splice(0, 1);
             //check if player has more than 5 cards
+            //PROGRAMMER'S NOTE: technically in blackjack the 5 card charlie only
+            //wins if the sum of the 5 cards is also <=21, however, by user request
+            //I have decided not to check for the sum, as such, no matter what the
+            //final sum is, having 5 cards makes you the winner. Consider this a
+            //house rule for Mima's casino, but take note that blackjack played
+            //like this leans extremely hard in the player's favour.
             if (item.playerhands[j].length === 5) {
               //player wins by default
               item.player_state[j] = 3;
