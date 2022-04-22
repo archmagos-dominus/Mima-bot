@@ -27,5 +27,4 @@
   You can then use `!wake` in the channel to wake her up. From there, use `!help` to get a list of commands.
 
 ## Feature Roadmap
-  1. Add blackjack
-  2. Integrate Mima-bot with the ShanghAI backend for basic conversational use.
+  1. Integrate Mima-bot with the ShanghAI backend for basic conversational use.
