@@ -83,6 +83,21 @@ function checkUser(user, message) {
   return usr;
 }
 
+//function to remove user reactions from message
+async function remove_react(user_id, message){
+  //get user reactions to the message
+  const userReactions = message.reactions.cache.filter(reaction => reaction.users.cache.has(user_id));
+  try {
+    //iterate through the reactions for those of the user
+	  for (const reaction of userReactions.values()) {
+      //remove reaction
+      await reaction.users.remove(user_id);
+	  }
+   } catch (error) {
+	    console.error('Failed to remove reactions.');
+    }
+}
+
 //function checking for Blackjack games starting/timing out/uhh (every second)
 setInterval(() => {
   //iterate through all the currecnt blackjack tables (gameinstances)
@@ -1714,6 +1729,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
         //add his hand to the playerhands array
         var hand = [null, null];
         item.playerhands.push(hand);
+        //remove user reaction
+        remove_react(user.id, item.message);
       } else if (reaction.emoji.name === "🇸") {
         //check if the game is running
         if (!item.started) return;
@@ -1740,6 +1757,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
             }
           }
         });
+        //remove user reaction
+        remove_react(user.id, item.message);
       } else if (reaction.emoji.name === "🇭") {
         //check if the game is running
         if (!item.started) return;
@@ -1778,6 +1797,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
           item.player_time = time;
           }
         });
+        //remove user reaction
+        remove_react(user.id, item.message);
       }
     }
   });
