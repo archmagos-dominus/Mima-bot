@@ -2369,15 +2369,13 @@ client.on("messageCreate", async (message) =>{
     //check if the message is sent in the botspam channel
   	if (config.CHANNELID.includes(message.channel.id)){
       //helper var
-    	var mes = message.content;
+    	var mes = message.content.toLowerCase();
       //slice the PMORS
-    	const input = mes.slice(PMORS.length).trim();
+    	var input = mes.slice(PMORS.length).trim();
       //check that the command actually has something in it left
     	if (!input.length) return;
       //regex madness (check that there is a commad as a word or a $ and maybe some args after it)
     	if (!input.match(/(\$|\w+)\s*([\s\S]*)/)) return;
-      //make it LowerCase
-      input = input.toLowerCase();
       //check if bot is running
       if (running) {
         //fortune telling (flavour """inspired""" from Stardew Valley)
