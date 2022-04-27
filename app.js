@@ -2376,6 +2376,8 @@ client.on("messageCreate", async (message) =>{
     	if (!input.length) return;
       //regex madness (check that there is a commad as a word or a $ and maybe some args after it)
     	if (!input.match(/(\$|\w+)\s*([\s\S]*)/)) return;
+      //make it LowerCase
+      input = input.toLowerCase();
       //check if bot is running
       if (running) {
         //fortune telling (flavour """inspired""" from Stardew Valley)
@@ -2432,7 +2434,7 @@ client.on("messageCreate", async (message) =>{
     }
   } else {
     //helper var
-    var mes = message.content;
+    var mes = message.content.toLowerCase();
     //check if bot is running
     if (running) {
       //adding currency for every message that is not a bot command
