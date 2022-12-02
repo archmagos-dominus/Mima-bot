@@ -11,10 +11,10 @@
   The following are required to run Mima-bot:
   - computer with internet connection
   - `node v16.13.1`
-  - `canvas@2.8.0`
-  - `discord.js@12.5.3`
-  - `sequelize@6.6.5`
-  - `sqlite3@5.0.2`
+  - `canvas`
+  - `discord.js`
+  - `sequelize`
+  - `sqlite3`
 
 ## Setting up
   All the variables you will need to edit in order to make Mima-bot work in your server(s) are located in the `config.json` file. Make sure to edit the `TOKEN` value with your own token, as well as `CHANNELID` and `ANNOUNCEMENTID` with the id's of the channel(s) Mima-bot will be present on. The `BOTOWNER` value should be your discord ID so that you can use the bot owner commands.
